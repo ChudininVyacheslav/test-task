@@ -1,0 +1,17 @@
+.add-task {
+    position: absolute;
+    margin-top: 150px;
+    margin-left: 500px;
+    max-width: 450px;
+}
+
+.task__btn-delete, .task__btn-done{
+height: 35px;
+}
+
+.task {
+    display: flex;
+    margin-top: 50px;
+}
+
+.task__text {}
