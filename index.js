@@ -1,105 +1,98 @@
 const inputNode = document.querySelector('.add-tusk__input');
 const btnAddNode = document.querySelector('.add-tusk__btn-add');
-const addTaskNode = document.querySelector('.add-task');
+const createTaskNode = document.querySelector('.create-task');
 
 btnAddNode.addEventListener("click", () => {
-    addTags();
+    addTask();
 });
 
-const addTags = function () {
-    let textInput = '';
-    textInput += inputNode.value;
+const addTask = function () {
+    const valueInput = inputNode.value || 'Пример заметки';
+    const div = addTaskHtml(valueInput);
+    createTaskNode.append(div);
+    inputNode.value = '';
+    localStorage.setItem(valueInput, valueInput.toString());
+}
 
-    if (textInput == '') {
-        textInput = 'Пример заметки';
-    };
+const addTaskHtml = function (textInput = "Пример заметки") {
+    let div = document.createElement("div");
+    div.className = 'task';
 
-    let divTag = document.createElement("div");
-    divTag.className = 'task';
-    addTaskNode.appendChild(divTag);
+    let text = document.createElement("p");
+    text.className = 'task__text';
+    text.innerHTML = textInput;
+    div.appendChild(text);
 
-    let textTag = document.createElement("p");
-    textTag.className = 'task__text';
-    textTag.innerHTML = textInput;
-    divTag.appendChild(textTag);
+    let btnDelete = document.createElement("button");
+    btnDelete.className = 'task__btn-delete';
+    btnDelete.innerHTML = 'Удалить';
+    div.appendChild(btnDelete);
 
-    let btnDeleteTag = document.createElement("button");
-    btnDeleteTag.className = 'task__btn-delete';
-    btnDeleteTag.innerHTML = 'Удалить';
-    divTag.appendChild(btnDeleteTag);
+    let btnEdit = document.createElement("button");
+    btnEdit.className = 'task__btn-edit';
+    btnEdit.innerHTML = 'Изменить';
+    div.appendChild(btnEdit);
 
-    let btnDoneTag = document.createElement("button");
-    btnDoneTag.className = 'task__btn-done';
-    btnDoneTag.innerHTML = 'Изменить';
-    divTag.appendChild(btnDoneTag);
-
-    inputNode.value = "";
-
-    btnDeleteTag.addEventListener("click", () => {
-        addTaskNode.removeChild(divTag, textTag, btnDeleteTag, btnDoneTag);
-        
-        localStorage.removeItem(textInput);
+    btnDelete.addEventListener("click", () => {
+        removeTask(div, textInput);
     });
 
-    btnDoneTag.addEventListener("click", () => {
-        inputNode.value = textTag.textContent;
-        addTaskNode.removeChild(divTag, textTag, btnDeleteTag, btnDoneTag);
-
-        localStorage.removeItem(textInput);
-    });
-
-    localStorage.setItem(textInput, textInput.toString())
+    btnEdit.addEventListener("click", () => {
+        removeTask(div, textInput);
+        inputNode.value = text.textContent;
+    });  
+    return div;
 };
 
-addTags();
+const removeTask = function (div, localStorageKey) {
+    createTaskNode.removeChild(div);
+    localStorage.removeItem(localStorageKey);
+};
 
-const locStor = function (value) {
+addTask();
 
-    let textInput = '';
-    textInput += value;
+const addTasklocStorHtml = function (value) {
+    let textInput = value;
 
-    let divTag = document.createElement("div");
-    divTag.className = 'task';
-    addTaskNode.appendChild(divTag);
+    let div = document.createElement("div");
+    div.className = 'task';
+    createTaskNode.appendChild(div);
 
-    let textTag = document.createElement("p");
-    textTag.className = 'task__text';
-    textTag.innerHTML = textInput;
-    divTag.appendChild(textTag);
+    let text = document.createElement("p");
+    text.className = 'task__text';
+    text.innerHTML = textInput;
+    div.appendChild(text);
 
-    let btnDeleteTag = document.createElement("button");
-    btnDeleteTag.className = 'task__btn-delete';
-    btnDeleteTag.innerHTML = 'Удалить';
-    divTag.appendChild(btnDeleteTag);
+    let btnDelete = document.createElement("button");
+    btnDelete.className = 'task__btn-delete';
+    btnDelete.innerHTML = 'Удалить';
+    div.appendChild(btnDelete);
 
-    let btnDoneTag = document.createElement("button");
-    btnDoneTag.className = 'task__btn-done';
-    btnDoneTag.innerHTML = 'Изменить';
-    divTag.appendChild(btnDoneTag);
+    let btnEdit = document.createElement("button");
+    btnEdit.className = 'task__btn-edit';
+    btnEdit.innerHTML = 'Изменить';
+    div.appendChild(btnEdit);
 
     if (textInput == 'Пример заметки') {
-        addTaskNode.removeChild(divTag, textTag, btnDeleteTag, btnDoneTag);
+        removeTask(div, textInput);
     };
 
-    inputNode.value = "";
-
-    btnDeleteTag.addEventListener("click", () => {
-        addTaskNode.removeChild(divTag, textTag, btnDeleteTag, btnDoneTag);
-        
-        localStorage.removeItem(textInput);
+    btnDelete.addEventListener("click", () => {
+        removeTask(div, textInput);
     });
 
-    btnDoneTag.addEventListener("click", () => {
-        inputNode.value = textTag.textContent;
-        addTaskNode.removeChild(divTag, textTag, btnDeleteTag, btnDoneTag);
+    btnEdit.addEventListener("click", () => {
+        removeTask(div, textInput);
+        inputNode.value = text.textContent;
     });
-
-    localStorage.setItem(textInput, textInput.toString())
 };
 
-const items = { ...localStorage };
+const loadingTaskLocStor = function () {
+    const items = { ...localStorage }; 
+    const arrItems = Object.keys(items);  
+    arrItems.forEach(key => {
+        addTasklocStorHtml(key)
+    });
+};
 
-const arrItems = Object.keys(items);
-arrItems.forEach(key => {
-    locStor(key)
-});
+loadingTaskLocStor();

@@ -1,12 +1,13 @@
-.add-task {
+.notes {
     position: absolute;
     margin-top: 150px;
     margin-left: 500px;
     max-width: 450px;
 }
 
-.task__btn-delete, .task__btn-done{
-height: 35px;
+.task__btn-delete,
+.task__btn-edit {
+    height: 35px;
 }
 
 .task {
