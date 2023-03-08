@@ -2,20 +2,30 @@ const inputNode = document.querySelector('.add-tusk__input');
 const btnAddNode = document.querySelector('.add-tusk__btn-add');
 const createTaskNode = document.querySelector('.create-task');
 const addTaskNode = document.querySelector('.add-task');
+const taskTextNode = document.querySelector('.task__text');
+let check = '';
 
 btnAddNode.addEventListener("click", () => {
+    if (inputNode.value == '') {
+        return alert('Вы не ввели текст заметки!');
+    } else if (check === inputNode.value && check !== '') {
+        console.log("vtoroy")
+        return alert('Такая заметка уже существует!');
+    };
     addTask();
+   
 });
 
 const addTask = function () {
     const valueInput = inputNode.value || 'Пример заметки';
     const div = addTaskHtml(valueInput);
-    createTaskNode.append(div);
+    check = div.children[0].textContent;
     inputNode.value = '';
+    createTaskNode.append(div);
     localStorage.setItem(valueInput, valueInput.toString());
 };
 
-const addTaskHtml = function (textInput ) {
+const addTaskHtml = function (textInput) {
     let div = document.createElement("div");
     div.className = 'task';
 
@@ -29,19 +39,20 @@ const addTaskHtml = function (textInput ) {
     btnDelete.innerHTML = 'Удалить';
     div.append(btnDelete);
 
+    btnDelete.addEventListener("click", () => {
+        removeTask(div, textInput);
+        check = '';
+    });
+
     let btnEdit = document.createElement("button");
     btnEdit.className = 'task__btn-edit';
     btnEdit.innerHTML = 'Изменить';
     div.append(btnEdit);
 
-    btnDelete.addEventListener("click", () => {
-        removeTask(div, textInput);
-    });
-
     btnEdit.addEventListener("click", () => {
-        removeTask(div, textInput);
         inputNode.value = text.textContent;
-        btnsFont()
+        let textForCheck = div.children[0].textContent;
+        check = textForCheck;
     });
     return div;
 };
@@ -58,7 +69,7 @@ const loadingTaskLocStor = function () {
     if (arrItems.length === 0) {
         arrItems.push("Пример заметки");
     };
-    
+
     const arrItemsNodes = arrItems.map((textValue) => addTaskHtml(textValue));
     createTaskNode.append(...arrItemsNodes);
 };
