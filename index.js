@@ -2,30 +2,30 @@ const inputNode = document.querySelector('.add-tusk__input');
 const btnAddNode = document.querySelector('.add-tusk__btn-add');
 const createTaskNode = document.querySelector('.create-task');
 const addTaskNode = document.querySelector('.add-task');
-const taskTextNode = document.querySelector('.task__text');
-let check = '';
+const btnItalicNode = document.querySelector('.add-tusk__btn-italic');
+const btnBoldNode = document.querySelector('.add-tusk__btn-bold');
+
 
 btnAddNode.addEventListener("click", () => {
-    if (inputNode.value == '') {
+    const value = inputNode.value;
+    const isValueExists = localStorage.getItem(value);
+    if (value == '') {
         return alert('Вы не ввели текст заметки!');
-    } else if (check === inputNode.value && check !== '') {
-        console.log("vtoroy")
+    } else if (isValueExists) {
         return alert('Такая заметка уже существует!');
     };
-    addTask();
-   
+    addTask(value);
 });
 
-const addTask = function () {
-    const valueInput = inputNode.value || 'Пример заметки';
-    const div = addTaskHtml(valueInput);
-    check = div.children[0].textContent;
+const addTask = (valueInput) => {
+
+    const div = createTask(valueInput);
     inputNode.value = '';
     createTaskNode.append(div);
     localStorage.setItem(valueInput, valueInput.toString());
 };
 
-const addTaskHtml = function (textInput) {
+const createTask = (textInput) => {
     let div = document.createElement("div");
     div.className = 'task';
 
@@ -41,7 +41,6 @@ const addTaskHtml = function (textInput) {
 
     btnDelete.addEventListener("click", () => {
         removeTask(div, textInput);
-        check = '';
     });
 
     let btnEdit = document.createElement("button");
@@ -51,44 +50,47 @@ const addTaskHtml = function (textInput) {
 
     btnEdit.addEventListener("click", () => {
         inputNode.value = text.textContent;
-        let textForCheck = div.children[0].textContent;
-        check = textForCheck;
     });
     return div;
 };
 
-const removeTask = function (div, localStorageKey) {
+const removeTask =  (div, localStorageKey) => {
     createTaskNode.removeChild(div);
     localStorage.removeItem(localStorageKey);
 };
 
-const loadingTaskLocStor = function () {
+const loadingTaskLocStor =  () => {
     const items = { ...localStorage };
-
+    console.log(items)
     const arrItems = Object.keys(items);
+    console.log(arrItems)
     if (arrItems.length === 0) {
         arrItems.push("Пример заметки");
     };
 
-    const arrItemsNodes = arrItems.map((textValue) => addTaskHtml(textValue));
+    const arrItemsNodes = arrItems.map((textValue) => createTask(textValue));
     createTaskNode.append(...arrItemsNodes);
 };
 
 loadingTaskLocStor();
 
-const btnsFont = function () {
-    let italic = document.createElement("button");
-    italic.className = 'add-task__btn-italic';
-    italic.innerHTML = 'К';
-    addTaskNode.appendChild(italic);
+btnItalicNode.addEventListener("click", () => {
+    if (btnItalicNode.classList == 'add-tusk__btn-italic') {
+        btnItalicNode.classList.remove('add-tusk__btn-italic');
+        return btnItalicNode.classList.add('add-tusk__btn-italic-active');
+    } if (btnItalicNode.classList == 'add-tusk__btn-italic-active') {
+        btnItalicNode.classList.remove('add-tusk__btn-italic-active');
+        btnItalicNode.classList.add('add-tusk__btn-italic');
+    };
+});
 
-    italic.addEventListener("click", () => {
-        const text = inputNode.value
+btnBoldNode.addEventListener("click", () => {
+    if (btnBoldNode.classList == 'add-tusk__btn-bold') {
+        btnBoldNode.classList.remove('add-tusk__btn-bold');
+        return btnBoldNode.classList.add('add-tusk__btn-bold-active');
+    } if (btnBoldNode.classList == 'add-tusk__btn-bold-active') {
+        btnBoldNode.classList.remove('add-tusk__btn-bold-active');
+        btnBoldNode.classList.add('add-tusk__btn-bold');
+    };
+});
 
-    });
-
-    let fat = document.createElement("button");
-    fat.className = 'add-task__btn-fat';
-    fat.innerHTML = 'Ж';
-    addTaskNode.appendChild(fat);
-};
