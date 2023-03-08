@@ -48,8 +48,8 @@ color: #fff;
     display: inline-block;
     font-size: 18px;
     color: #24211a;
+    width: 225px;
     margin-right: 20px;
-    padding-right: 90px;
 }
 
 .task__btn-delete,
@@ -57,5 +57,4 @@ color: #fff;
     position: relative;
     height: 25px;
     margin-left: 5px;
-    /* left: 225px; */
 }
