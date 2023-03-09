@@ -104,6 +104,14 @@ button:hover {
     border-radius: 15px;
 }
 
+.add-tusk__btn-italic, .add-tusk__btn-italic-active {
+    font-style: italic;
+}
+
+.add-tusk__btn-bold, .add-tusk__btn-bold-active{
+    font-weight: bold;
+}
+
 .add-tusk__btn-italic-active,
 .add-tusk__btn-bold-active {
     color: #fff;
