@@ -63,7 +63,7 @@ const createTask = (textInput, options, id) => {
     div.append(btnDelete);
 
     btnDelete.addEventListener("click", () => {
-        removeTask(div)
+        removeTask(div);
     });
 
     let btnEdit = document.createElement("button");
@@ -72,7 +72,7 @@ const createTask = (textInput, options, id) => {
     div.append(btnEdit);
 
     btnEdit.addEventListener("click", () => {
-        changeTask(div)
+        changeTask(div);
         inputNode.value = text.textContent;
     });
     return div;
@@ -103,8 +103,8 @@ const changeTask = (div) => {
                     return inputNode.classList = 'add-tusk__input-italic';
                 } else {
                     return inputNode.classList = 'add-tusk__input';
-                }
-            }
+                };
+            };
         }
     );
 
