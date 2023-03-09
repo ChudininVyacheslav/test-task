@@ -5,7 +5,7 @@ const addTaskNode = document.querySelector('.add-task');
 const btnItalicNode = document.querySelector('.add-tusk__btn-italic');
 const btnBoldNode = document.querySelector('.add-tusk__btn-bold');
 
-
+let style = {};
 
 btnAddNode.addEventListener("click", () => {
     const value = inputNode.value;
@@ -16,48 +16,45 @@ btnAddNode.addEventListener("click", () => {
         return alert('Такая заметка уже существует!');
     };
     addTask(value);
+});
+
+const addTask = (valueInput = 'Пример заметки') => {
+    const task = {
+        id: Date.now(),
+        label: valueInput,
+        options: { ...style },
+    };
+
+    const div = createTask(valueInput, task.options, task.id);
+    const tasks = JSON.parse(localStorage.getItem('tasks'));
+
+    tasks.push(task);
+
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+
+    createTaskNode.append(div);
+
+    inputNode.value = '';
+    style = {};
     btnItalicNode.classList = 'add-tusk__btn-italic';
     btnBoldNode.classList = 'add-tusk__btn-bold';
     inputNode.classList = 'add-tusk__input';
-});
-
-const addTask = (valueInput = 'Пример заметки', font = 'task__text') => {
-
-    const div = createTask(valueInput, font);
-    inputNode.value = '';
-    createTaskNode.append(div);
-    // localStorage.setItem(valueInput, valueInput.toString());
 };
 
-
-
-const createTask = (textInput, font = 'task__text') => {
-    // const id = Date.now();
-    // const tasks = [];
-
-
-    // tasks.push({ label: textInput, id: id, options: { fontStyle: font } });
-    // localStorage.setItem(textInput, JSON.stringify(tasks));
-
+const createTask = (textInput, options, id) => {
     let div = document.createElement("div");
     div.className = 'task';
-
-
-    // let font = '';
-
+    div.dataset.id = id;
 
     let text = document.createElement("p");
-
-    if (btnItalicNode.classList == 'add-tusk__btn-italic-active' || font == 'task__text-italic') {
-        text.className = 'task__text-italic';
-
-    } else if (btnBoldNode.classList == 'add-tusk__btn-bold-active' || font == 'task__text-bold') {
-        text.className = 'task__text-bold';
-    } else {
-        text.className = 'task__text';
-    };
-
     text.innerHTML = textInput;
+
+    if (options.fontWeight) {
+        text.style.fontWeight = options.fontWeight;
+    }
+    if (options.fontStyle) {
+        text.style.fontStyle = options.fontStyle;
+    };
     div.append(text);
 
     let btnDelete = document.createElement("button");
@@ -66,7 +63,7 @@ const createTask = (textInput, font = 'task__text') => {
     div.append(btnDelete);
 
     btnDelete.addEventListener("click", () => {
-        removeTask(div, textInput);
+        removeTask(div)
     });
 
     let btnEdit = document.createElement("button");
@@ -75,138 +72,106 @@ const createTask = (textInput, font = 'task__text') => {
     div.append(btnEdit);
 
     btnEdit.addEventListener("click", () => {
+        changeTask(div)
         inputNode.value = text.textContent;
-        if (text.className == 'task__text-italic') {
-            inputNode.classList.remove('add-tusk__input');
-            inputNode.classList.add('add-tusk__input-italic');
-        } if (text.className == 'task__text-bold') {
-            inputNode.classList.remove('add-tusk__input');
-            inputNode.classList.add('add-tusk__input-bold');
-        }
     });
-    let task = { name: textInput, font: text.className };
-
-    localStorage.setItem(textInput, JSON.stringify(task));
-
     return div;
 };
 
-const removeTask = (div, localStorageKey) => {
+// const removeTaskEdit = (div, textInput) => {
+//     const tasks = JSON.parse(localStorage.getItem('tasks'));
+//     let obj = {
+//         id: div.dataset.id,
+//         label: textInput
+//     };
+//     const findTasks = tasks.find(
+//         (task) => {
+//             if (task.id === Number(obj.id) && task.label === obj.label) {
+//              return console.log(obj.label)
+//             }
+//         }
+//     );
+
+const changeTask = (div) => {
+    const tasks = JSON.parse(localStorage.getItem('tasks'));
+    const findTasks = tasks.find(
+        (task) => {
+            if (task.id === Number(div.dataset.id)) {
+                if (task.options.fontWeight) {
+                    return inputNode.classList = 'add-tusk__input-bold';
+                } else if (task.options.fontStyle) {
+                    return inputNode.classList = 'add-tusk__input-italic';
+                } else {
+                    return inputNode.classList = 'add-tusk__input';
+                }
+            }
+        }
+    );
+
+    const filteredTasks = tasks.filter(
+        (task) => task.id !== Number(div.dataset.id)
+    );
+    localStorage.setItem('tasks', JSON.stringify(filteredTasks));
     createTaskNode.removeChild(div);
-    localStorage.removeItem(localStorageKey);
 };
 
-const loadingTaskLocStor = () => {
+const removeTask = (div) => {
+    const tasks = JSON.parse(localStorage.getItem('tasks'));
+    const filteredTasks = tasks.filter(
+        (task) => task.id !== Number(div.dataset.id)
+    );
+    localStorage.setItem('tasks', JSON.stringify(filteredTasks));
+    createTaskNode.removeChild(div);
+};
 
+const renderTasks = () => {
+    const tasks = JSON.parse(localStorage.getItem("tasks"));
+    const taskNodes = tasks.map((task) =>
+        createTask(task.label, task.options, task.id)
+    );
+    createTaskNode.append(...taskNodes);
+};
 
-    let items = { ...localStorage };
-    let arrItems = Object.values(items);
-    if (arrItems.length === 0) {
-        addTask("Пример заметки")
-    }
-    arrItemsNodes = arrItems.map((elem) => {
-        let name = JSON.parse(elem).name;
-        console.log(name)
-        let font = JSON.parse(elem).font;
-        console.log(font)
-        addTask(name, font)
-    })
-
-
-    // const arrItems = Object.keys(items);
-    // if (arrItems.length === 0) {
-    //     arrItems.push("Пример заметки");
-    // }
-
-    // const arrItemsNodes = arrItems.map((textValue) => createTask(textValue));
-    // createTaskNode.append(...arrItemsNodes);
-
-
-    // const items = { ...localStorage };
-    // console.log(typeof(items))
-    // let arrItems = Object.keys(items);
-    // console.log(typeof(arrItems))
-
-
-    // const nodes = arrItems.map((task) => {
-    //     createTask(task.label)
-    // const items = {...localStorage} ;
-    // items = JSON.parse(items)
-    // const keyLocStor = Object.keys(items)
-    // console.log(typeof (keyLocStor))
-
-
-
-    // ferstLoad(keyLocStor)
-
-
-
-}
-// const ferstLoad = (keyLocStor) => {
-//     console.log(keyLocStor)
-//     tasksStr = localStorage.getItem(keyLocStor);
-
-//     console.log(tasksStr)
-//     tasksStr = JSON.parse(tasksStr);
-//     if (tasksStr == null || tasksStr.length === 0) {
-//         tasksStr = []
-//         tasksStr.push("Пример заметки");
-//         const nodes = tasksStr.map((task) => createTask(task))
-//     createTaskNode.append(...nodes)
-//     }
-//     const nodes = tasksStr.map((task) => createTask(task))
-//     createTaskNode.append(...nodes)
-
-// }   
-
-
-
-// console.log(typeof(tasksStr))
-// let tasksItem = Object.keys(tasksStr);
-// const nodes = tasksStr.map((task) => createTask(task.label))
-// createTaskNode.append(...nodes)
-
-
-// if (tasksStr == null || tasksStr.length === 0) {
-//     tasksStr = []
-//     tasksStr.push("Пример заметки");
-
-//     console.log(2)
-// };
-// const nodes = tasksStr.map((task) => createTask(task.label))
-// console.log(nodes)
-// createTaskNode.append(...nodes);
-
-
-
-loadingTaskLocStor();
-
-// addTask()
+const createDefaultTasks = () => {
+    const tasks = JSON.parse(localStorage.getItem('tasks'));
+    if (!tasks || !tasks?.length) {
+        const defaultTasks = [
+            { label: 'Пример заметки', id: Date.now(), options: {} },
+        ];
+        localStorage.setItem('tasks', JSON.stringify(defaultTasks));
+    };
+};
+createDefaultTasks();
+renderTasks();
 
 btnItalicNode.addEventListener("click", () => {
+    if (style.fontStyle) {
+        style.fontStyle = "";
+    } else {
+        style.fontStyle = "italic";
+    };
+
     if (btnItalicNode.classList == 'add-tusk__btn-italic') {
-        btnItalicNode.classList.remove('add-tusk__btn-italic');
-        inputNode.classList.remove('add-tusk__input');
-        inputNode.classList.add('add-tusk__input-italic');
-        return btnItalicNode.classList.add('add-tusk__btn-italic-active');
+        inputNode.classList = 'add-tusk__input-italic';
+        return btnItalicNode.classList = 'add-tusk__btn-italic-active';
     } if (btnItalicNode.classList == 'add-tusk__btn-italic-active') {
-        btnItalicNode.classList.remove('add-tusk__btn-italic-active');
-        btnItalicNode.classList.add('add-tusk__btn-italic');
-        inputNode.classList.remove('add-tusk__input-italic');
-        inputNode.classList.add('add-tusk__input');
+        btnItalicNode.classList = 'add-tusk__btn-italic';
+        inputNode.classList = 'add-tusk__input';
     };
 });
 
 btnBoldNode.addEventListener("click", () => {
+    if (style.fontWeight) {
+        style.fontWeight = "";
+    } else {
+        style.fontWeight = "bold";
+    };
+
     if (btnBoldNode.classList == 'add-tusk__btn-bold') {
-        btnBoldNode.classList.remove('add-tusk__btn-bold');
-        inputNode.classList.remove('add-tusk__input');
-        inputNode.classList.add('add-tusk__input-bold');
-        return btnBoldNode.classList.add('add-tusk__btn-bold-active');
+        inputNode.classList = 'add-tusk__input-bold';
+        return btnBoldNode.classList = 'add-tusk__btn-bold-active';
     } if (btnBoldNode.classList == 'add-tusk__btn-bold-active') {
-        btnBoldNode.classList.remove('add-tusk__btn-bold-active');
-        btnBoldNode.classList.add('add-tusk__btn-bold');
-        inputNode.classList.remove('add-tusk__input-bold');
-        inputNode.classList.add('add-tusk__input');
+        btnBoldNode.classList = 'add-tusk__btn-bold';
+        inputNode.classList = 'add-tusk__input';
     };
 });
