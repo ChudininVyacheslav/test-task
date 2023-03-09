@@ -19,7 +19,19 @@ body {
 
 .add-tusk__input {
     height: 20px;
+
 }
+
+.add-tusk__input-italic {
+    height: 20px;
+    font-style: italic;
+}
+
+.add-tusk__input-bold {
+    height: 20px;
+    font-weight: bold;
+}
+
 
 .add-tusk__btn-add,
 .add-tusk__btn-italic,
@@ -48,6 +60,25 @@ body {
     display: inline-block;
     font-size: 18px;
     color: #24211a;
+    width: 225px;
+    margin-right: 20px;
+    
+}
+
+.task__text-italic{
+    display: inline-block;
+    font-size: 18px;
+    font-style: italic;
+    color: #24211a;
+    width: 225px;
+    margin-right: 20px;
+}
+
+.task__text-bold{
+    display: inline-block;
+    font-size: 18px;
+    color: #24211a;
+    font-weight: bold;
     width: 225px;
     margin-right: 20px;
 }
