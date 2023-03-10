@@ -6,41 +6,37 @@ const btnItalicNode = document.querySelector('.add-tusk__btn-italic');
 const btnBoldNode = document.querySelector('.add-tusk__btn-bold');
 
 let style = {};
-let changeNoteId = '';
 
 btnAddNode.addEventListener("click", () => {
     const value = inputNode.value;
     const isValueExists = localStorage.getItem(value);
     if (value == '') {
         return alert('Вы не ввели текст заметки!');
-    } else if (isValueExists) {
+    } else if (checkLabel(value)) {
         return alert('Такая заметка уже существует!');
     };
-
     addTask(value);
 });
 
+const checkLabel = (value) => {
+    const tasks = JSON.parse(localStorage.getItem('tasks'));
+    const findTasks = tasks.find(
+        (task) => {
+            if (task.label === value) {
+                return true;
+            };
+        });
+    return findTasks;
+};
+
 const addTask = (valueInput = 'Пример заметки') => {
-    const task = {
+    let task = {
         id: Date.now(),
         label: valueInput,
         options: { ...style },
     };
 
-
-    const test = saveChangeTask(changeNoteId,valueInput );
-    
-    if (test !== '') {
-        
-        div = createTask(valueInput, task.options, test);
-        // console.log(div)
-        div
-    } else if (test == ''){
-        console.log(test)
-        div = createTask(valueInput, task.options, task.id);
-        // console.log(div)
-    }
-
+    div = createTask(valueInput, task.options, task.id);
 
     const tasks = JSON.parse(localStorage.getItem('tasks'));
 
@@ -95,40 +91,27 @@ const createTask = (textInput, options, id) => {
     return div;
 };
 
-// const removeTaskEdit = (div, textInput) => {
-//     const tasks = JSON.parse(localStorage.getItem('tasks'));
-//     let obj = {
-//         id: div.dataset.id,
-//         label: textInput
-//     };
-//     const findTasks = tasks.find(
-//         (task) => {
-//             if (task.id === Number(obj.id) && task.label === obj.label) {
-//              return console.log(obj.label)
-//             }
-//         }
-//     );
-
-const changeTask = (div) => {
+const changeTask = (div, textInput) => {
     const tasks = JSON.parse(localStorage.getItem('tasks'));
     const findTasks = tasks.find(
         (task) => {
             if (task.id === Number(div.dataset.id)) {
                 if (task.options.fontWeight) {
-                    return inputNode.classList = 'add-tusk__input-bold', changeNoteId = task.id;
+                    return inputNode.classList = 'add-tusk__input-bold', btnBoldNode.classList = 'add-tusk__btn-bold-active', style.fontWeight = "bold";
                 } else if (task.options.fontStyle) {
-                    return inputNode.classList = 'add-tusk__input-italic', changeNoteId = task.id;
+                    return inputNode.classList = 'add-tusk__input-italic', btnItalicNode.classList = 'add-tusk__btn-italic-active', style.fontStyle = "italic";
                 } else {
-                    return inputNode.classList = 'add-tusk__input', changeNoteId = task.id;
+                    return inputNode.classList = 'add-tusk__input';
                 };
             };
         }
     );
-    // const filteredTasks = tasks.filter(
-    //     (task) => task.id !== Number(div.dataset.id)
-    // );
-    // localStorage.setItem('tasks', JSON.stringify(filteredTasks));
-    // createTaskNode.removeChild(div);
+
+    const filteredTasks = tasks.filter(
+        (task) => task.id !== Number(div.dataset.id)
+    );
+    localStorage.setItem('tasks', JSON.stringify(filteredTasks));
+    createTaskNode.removeChild(div);
 };
 
 const removeTask = (div) => {
@@ -166,7 +149,6 @@ btnItalicNode.addEventListener("click", () => {
     } else {
         style.fontStyle = "italic";
     };
-
     if (btnItalicNode.classList == 'add-tusk__btn-italic') {
         inputNode.classList = 'add-tusk__input-italic';
         return btnItalicNode.classList = 'add-tusk__btn-italic-active';
@@ -182,7 +164,6 @@ btnBoldNode.addEventListener("click", () => {
     } else {
         style.fontWeight = "bold";
     };
-
     if (btnBoldNode.classList == 'add-tusk__btn-bold') {
         inputNode.classList = 'add-tusk__input-bold';
         return btnBoldNode.classList = 'add-tusk__btn-bold-active';
@@ -191,16 +172,3 @@ btnBoldNode.addEventListener("click", () => {
         inputNode.classList = 'add-tusk__input';
     };
 });
-const saveChangeTask = (changeNoteId, valueInput) => {
-    const tasks = JSON.parse(localStorage.getItem('tasks'));
-    const searchId = tasks.find(
-        (task) => {
-            if (task.id === Number(changeNoteId)) {
-                task.label = valueInput
-                let saveId = task.id
-                return saveId;
-            };
-        }
-    );
-    return searchId;
-};
