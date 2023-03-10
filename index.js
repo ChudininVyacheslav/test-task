@@ -6,6 +6,7 @@ const btnItalicNode = document.querySelector('.add-tusk__btn-italic');
 const btnBoldNode = document.querySelector('.add-tusk__btn-bold');
 
 let style = {};
+let changeNoteId = '';
 
 btnAddNode.addEventListener("click", () => {
     const value = inputNode.value;
@@ -15,6 +16,7 @@ btnAddNode.addEventListener("click", () => {
     } else if (isValueExists) {
         return alert('Такая заметка уже существует!');
     };
+
     addTask(value);
 });
 
@@ -25,7 +27,21 @@ const addTask = (valueInput = 'Пример заметки') => {
         options: { ...style },
     };
 
-    const div = createTask(valueInput, task.options, task.id);
+
+    const test = saveChangeTask(changeNoteId,valueInput );
+    
+    if (test !== '') {
+        
+        div = createTask(valueInput, task.options, test);
+        // console.log(div)
+        div
+    } else if (test == ''){
+        console.log(test)
+        div = createTask(valueInput, task.options, task.id);
+        // console.log(div)
+    }
+
+
     const tasks = JSON.parse(localStorage.getItem('tasks'));
 
     tasks.push(task);
@@ -36,6 +52,7 @@ const addTask = (valueInput = 'Пример заметки') => {
 
     inputNode.value = '';
     style = {};
+    changeNoteId = '';
     btnItalicNode.classList = 'add-tusk__btn-italic';
     btnBoldNode.classList = 'add-tusk__btn-bold';
     inputNode.classList = 'add-tusk__input';
@@ -98,21 +115,20 @@ const changeTask = (div) => {
         (task) => {
             if (task.id === Number(div.dataset.id)) {
                 if (task.options.fontWeight) {
-                    return inputNode.classList = 'add-tusk__input-bold';
+                    return inputNode.classList = 'add-tusk__input-bold', changeNoteId = task.id;
                 } else if (task.options.fontStyle) {
-                    return inputNode.classList = 'add-tusk__input-italic';
+                    return inputNode.classList = 'add-tusk__input-italic', changeNoteId = task.id;
                 } else {
-                    return inputNode.classList = 'add-tusk__input';
+                    return inputNode.classList = 'add-tusk__input', changeNoteId = task.id;
                 };
             };
         }
     );
-
-    const filteredTasks = tasks.filter(
-        (task) => task.id !== Number(div.dataset.id)
-    );
-    localStorage.setItem('tasks', JSON.stringify(filteredTasks));
-    createTaskNode.removeChild(div);
+    // const filteredTasks = tasks.filter(
+    //     (task) => task.id !== Number(div.dataset.id)
+    // );
+    // localStorage.setItem('tasks', JSON.stringify(filteredTasks));
+    // createTaskNode.removeChild(div);
 };
 
 const removeTask = (div) => {
@@ -175,3 +191,16 @@ btnBoldNode.addEventListener("click", () => {
         inputNode.classList = 'add-tusk__input';
     };
 });
+const saveChangeTask = (changeNoteId, valueInput) => {
+    const tasks = JSON.parse(localStorage.getItem('tasks'));
+    const searchId = tasks.find(
+        (task) => {
+            if (task.id === Number(changeNoteId)) {
+                task.label = valueInput
+                let saveId = task.id
+                return saveId;
+            };
+        }
+    );
+    return searchId;
+};

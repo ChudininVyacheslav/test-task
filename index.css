@@ -51,7 +51,7 @@ button:hover {
 .title {
     position: absolute;
     top: 90px;
-    left: 760px;
+    margin-left: 5%;
     font-size: 30px;
     color: #55473a;
 }
