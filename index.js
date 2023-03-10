@@ -9,7 +9,6 @@ let style = {};
 
 btnAddNode.addEventListener("click", () => {
     const value = inputNode.value;
-    const isValueExists = localStorage.getItem(value);
     if (value == '') {
         return alert('Вы не ввели текст заметки!');
     } else if (checkLabel(value)) {
@@ -29,14 +28,14 @@ const checkLabel = (value) => {
     return findTasks;
 };
 
-const addTask = (valueInput = 'Пример заметки') => {
-    let task = {
-        id: Date.now(),
+const addTask = (valueInput) => {
+    const task = {
         label: valueInput,
+        id: Date.now(),
         options: { ...style },
     };
 
-    div = createTask(valueInput, task.options, task.id);
+    const div = createTask(valueInput, task.options, task.id);
 
     const tasks = JSON.parse(localStorage.getItem('tasks'));
 
@@ -48,7 +47,6 @@ const addTask = (valueInput = 'Пример заметки') => {
 
     inputNode.value = '';
     style = {};
-    changeNoteId = '';
     btnItalicNode.classList = 'add-tusk__btn-italic';
     btnBoldNode.classList = 'add-tusk__btn-bold';
     inputNode.classList = 'add-tusk__input';
@@ -91,7 +89,7 @@ const createTask = (textInput, options, id) => {
     return div;
 };
 
-const changeTask = (div, textInput) => {
+const changeTask = (div) => {
     const tasks = JSON.parse(localStorage.getItem('tasks'));
     const findTasks = tasks.find(
         (task) => {
@@ -101,17 +99,12 @@ const changeTask = (div, textInput) => {
                 } else if (task.options.fontStyle) {
                     return inputNode.classList = 'add-tusk__input-italic', btnItalicNode.classList = 'add-tusk__btn-italic-active', style.fontStyle = "italic";
                 } else {
-                    return inputNode.classList = 'add-tusk__input';
+                    return;
                 };
             };
         }
     );
-
-    const filteredTasks = tasks.filter(
-        (task) => task.id !== Number(div.dataset.id)
-    );
-    localStorage.setItem('tasks', JSON.stringify(filteredTasks));
-    createTaskNode.removeChild(div);
+    removeTask(div);
 };
 
 const removeTask = (div) => {
